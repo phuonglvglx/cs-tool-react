@@ -1,0 +1,22 @@
+export const viVN_Transaction = {
+    "app.transaction.title": "Danh sách giao dịch",
+    "app.transaction.table.phone": 'Số điện thoại',
+    "app.transaction.table.status": 'Trạng thái',
+    "app.transaction.table.product": 'Sản phẩm',
+    "app.transaction.table.invoice": 'Hoá đơn',
+    "app.transaction.table.transaction_id": 'Số giao dịch',
+    "app.transaction.table.platform_payment": 'Nền tảng thanh toán',
+    "app.transaction.table.payment_type": 'Loại thanh toán',
+    "app.transaction.table.payment_method": 'Phương thức thanh toán',
+    "app.transaction.table.cost": 'Giá gốc',
+    "app.transaction.table.money": 'Tiền',
+    "app.transaction.table.promotion": 'Khuyến mại',
+    "app.transaction.table.created_date": 'Ngày tạo',
+    "app.transaction.table.payment_date": 'Ngày thanh toán',
+    "app.transaction.table.payment_error": 'Thanh toán lỗi',
+
+    "app.transaction.form.form_create_date": 'Từ ngày tạo',
+    "app.transaction.form.to_create_date": 'Đến ngày tạo',
+    "app.transaction.form.form_payment_date": 'Từ ngày thanh toán',
+    "app.transaction.form.to_payment_date": 'Đến ngày thanh toán',
+}

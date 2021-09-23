@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  tool-react-antd:
+    image: tool-react-antd
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+      API: https://api.dev.icankids.com.vn
+      
+    ports:
+      - 3000:3000
+    command: ["yarn", "start"]
