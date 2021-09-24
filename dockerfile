@@ -2,7 +2,7 @@
 FROM node:13.12.0-alpine
 
 # set working directory
-WORKDIR /app
+WORKDIR /cs-tool-react
 
 # add `/app/node_modules/.bin` to $PATH
 ENV NODE_ENV=development
