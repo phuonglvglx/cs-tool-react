@@ -11,5 +11,5 @@ services:
       API: https://api.dev.icankids.com.vn
       
     ports:
-      - 3000:3000
+      - 3001:3001
     command: ["yarn", "start"]
