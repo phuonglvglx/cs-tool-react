@@ -1,101 +1,146 @@
 import { useCallback, useEffect, useState } from "react";
-import { Table, Card, Row, Col, DatePicker } from "antd";
-import { dataTransactions } from "./data.transaction";
+import { Link } from "@reach/router";
+import { Table, Card, Tag, Space, InputNumber } from "antd";
+// import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
 import { ITransaction } from "../../types/transaction.type";
 import { apiListTransaction } from "../../services/transaction.api";
+import { tableColumnTextFilterConfig } from "../../utils/filterTable";
+
+type Data = {
+  key: string;
+  name: string;
+};
 
 export default function TransactionScene() {
   const { t } = useLocale();
   const [loading, setLoading] = useState(false);
-  const dataSource: ITransaction[] = dataTransactions;
+  const [data, setData] = useState<ITransaction[]>([]);
+  // const dataSource: ITransaction[] = dataTransactions;
 
-  const onChange = (date: any, dateString: any) => {
-    console.log(date, dateString);
-  };
-
-  const fetchListTransaction = useCallback(async () => {
+  const fetchListTransaction = useCallback(async (sizepage: number) => {
     setLoading(true);
-    const res: ITransaction[] = await apiListTransaction();
-    console.log(res);
+    const res: ITransaction[] = await apiListTransaction(sizepage, 0);
+    setData(res);
+    setLoading(false);
   }, []);
 
-  useEffect(()=>{
-    fetchListTransaction();
-  }, [fetchListTransaction])
+  useEffect(() => {
+    fetchListTransaction(10);
+  }, [fetchListTransaction]);
 
-  const columns = [
+  const onChangePage = (value: number) => {
+    fetchListTransaction(value);
+  };
+
+  const columns: any = [
     {
       title: t({ id: "app.transaction.table.phone" }),
-      dataIndex: "sdt",
       key: "sdt",
-      width: 100,
+      fixed: "left",
+      render: (text: ITransaction) => (
+        <Link to={`/transaction/${text.user.id}`}>{text.user.phone}</Link>
+      ),
+      ...tableColumnTextFilterConfig<Data>(),
+      onFilter: (value: any, record: any) => {
+        return record.user.phone
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      },
     },
     {
       title: t({ id: "app.transaction.table.status" }),
-      dataIndex: "status",
       key: "status",
-      width: 100,
+      render: (record: ITransaction) => {
+        switch (record.status) {
+          case "pending":
+            return <Tag color="orange">{record.status}</Tag>;
+          case "succeed":
+            return <Tag color="blue">{record.status}</Tag>;
+          default:
+            <Tag color="red">{record.status}</Tag>;
+        }
+      },
+      filters: [
+        {
+          text: "pending",
+          value: "pending",
+        },
+        {
+          text: "succeed",
+          value: "succeed",
+        },
+      ],
+      onFilter: (value: any, record: ITransaction) =>
+        record.status.startsWith(value),
+      filterSearch: true,
+      fixed: "left",
     },
     {
       title: t({ id: "app.transaction.table.product" }),
-      dataIndex: "product",
       key: "product",
-      width: 100,
+      render: (record: any) => record.product.name,
+      fixed: "left",
+      ...tableColumnTextFilterConfig<Data>(),
+      onFilter: (value: any, record: ITransaction) => {
+        return record.product
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      },
     },
     {
       title: t({ id: "app.transaction.table.invoice" }),
-      dataIndex: "invoice",
+      dataIndex: "invoice_no",
       key: "invoice",
-      width: 100,
+      ...tableColumnTextFilterConfig<Data>(),
+      onFilter: (value: any, record: ITransaction) => {
+        return record.invoice_no
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      },
     },
     {
       title: t({ id: "app.transaction.table.transaction_id" }),
-      dataIndex: "transaction_id",
+      dataIndex: "id",
       key: "transaction_id",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.platform_payment" }),
       dataIndex: "platform_payment",
       key: "platform_payment",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.payment_type" }),
       dataIndex: "payment_type",
       key: "payment_type",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.payment_method" }),
       dataIndex: "payment_method",
       key: "payment_method",
-      width: 100,
     },
     {
-      title: t({ id: "app.transaction.table.cost" }),
-      dataIndex: "gia_goc",
+      title: t({ id: "app.transaction.table.selling_price" }),
       key: "gia_goc",
-      width: 100,
+      render: (record: any) => record.product.selling_price,
     },
     {
       title: t({ id: "app.transaction.table.money" }),
-      dataIndex: "money",
+      dataIndex: "total_amount",
       key: "money",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.promotion" }),
-      dataIndex: "promotion",
       key: "promotion",
-      width: 100,
+      render: (record: any) => record.discount.promo_code,
     },
     {
       title: t({ id: "app.transaction.table.created_date" }),
-      dataIndex: "created_date",
-      key: "created_date",
-      width: 100,
+      dataIndex: "created_at",
+      key: "created_at",
     },
     {
       title: t({ id: "app.transaction.table.payment_date" }),
@@ -113,11 +158,18 @@ export default function TransactionScene() {
 
   return (
     <div style={{ width: "100%" }}>
-      <Card>
-        <div>
-          <h2>{t({ id: "app.transaction.title" })}</h2>
-        </div>
-        <Row gutter={16}>
+      <Card
+        title={t({ id: "app.transaction.title" })}
+        extra={
+          <>
+            <Space>
+              <span>Show data:</span>
+              <InputNumber min={1} value={10} onChange={onChangePage} />
+            </Space>
+          </>
+        }
+      >
+        {/* <Row gutter={16}>
           <Col span={12}>
             <span>{t({ id: "app.transaction.form.form_create_date" })}</span>
             <DatePicker onChange={onChange} style={{ width: "100%" }} />
@@ -127,8 +179,8 @@ export default function TransactionScene() {
             <DatePicker onChange={onChange} style={{ width: "100%" }} />
           </Col>
         </Row>
-        <br />
-        <Row gutter={16}>
+        <br /> */}
+        {/* <Row gutter={16}>
           <Col span={12}>
             <span>{t({ id: "app.transaction.form.form_payment_date" })}</span>
             <DatePicker onChange={onChange} style={{ width: "100%" }} />
@@ -138,11 +190,11 @@ export default function TransactionScene() {
             <DatePicker onChange={onChange} style={{ width: "100%" }} />
           </Col>
         </Row>
-        <br />
+        <br /> */}
         <Table
           loading={loading}
           scroll={{ x: 1500 }}
-          dataSource={dataSource}
+          dataSource={data}
           columns={columns}
         />
       </Card>

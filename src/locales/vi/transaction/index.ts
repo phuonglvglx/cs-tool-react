@@ -8,7 +8,7 @@ export const viVN_Transaction = {
     "app.transaction.table.platform_payment": 'Nền tảng thanh toán',
     "app.transaction.table.payment_type": 'Loại thanh toán',
     "app.transaction.table.payment_method": 'Phương thức thanh toán',
-    "app.transaction.table.cost": 'Giá gốc',
+    "app.transaction.table.selling_price": 'Giá gốc',
     "app.transaction.table.money": 'Tiền',
     "app.transaction.table.promotion": 'Khuyến mại',
     "app.transaction.table.created_date": 'Ngày tạo',

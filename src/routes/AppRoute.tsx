@@ -7,6 +7,7 @@ import DashboardScene from "../scenes/dashboard";
 import TransactionScene from "../scenes/transactions";
 import PrivateRoute from "./PrivateRoute";
 import LoginScene from "../scenes/login";
+import TransactionDetail from "../scenes/detail";
 
 const { Content } = Layout;
 
@@ -36,6 +37,7 @@ const AppRoute = (props: any) => {
       <LayoutAdmin path="/">
         <PrivateRoute as={DashboardScene} path="/" />
         <PrivateRoute as={TransactionScene} path="/transaction" />
+        <PrivateRoute as={TransactionDetail} path="/transaction/:id"/>
       </LayoutAdmin>
     </Router>
   );

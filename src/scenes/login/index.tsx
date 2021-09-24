@@ -1,5 +1,4 @@
 import { Card, Form, Input, Button } from "antd";
-import { FC } from "react";
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import { useAppDispatch } from "../../stores";
 import { loginAsync } from "../../stores/user.store";

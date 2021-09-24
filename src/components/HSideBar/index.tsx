@@ -2,16 +2,6 @@ import React, { FC, useState } from "react";
 import {
   PieChartOutlined,
   TransactionOutlined,
-  ToolOutlined,
-  GiftOutlined,
-  GoldOutlined,
-  ShopOutlined,
-  MailOutlined,
-  RobotOutlined,
-  PhoneOutlined,
-  BellOutlined,
-  NotificationOutlined,
-  ExportOutlined,
 } from "@ant-design/icons";
 import { Link } from "@reach/router";
 import { Image, Layout, Menu } from "antd";
@@ -44,113 +34,7 @@ const HSideBar: FC = () => {
       label: t({ id: "app.sidebar.transaction" }),
       url: "transaction",
       icon: <TransactionOutlined />,
-    },
-    {
-      key: "pro",
-      label: t({ id: "app.sidebar.promotion_tool" }),
-      url:'',
-      icon: <ToolOutlined />,
-      children: [
-        {
-          key: "promotion",
-          label: t({ id: "app.sidebar.promotion_tool.promotion" }),
-          url: AppURL.promotion(),
-          icon: <GiftOutlined />,
-        },
-        {
-          key: "combo",
-          label: t({ id: "app.sidebar.promotion_tool.combo" }),
-          url: 'combo',
-          icon: <GoldOutlined />,
-        },
-        {
-          key: "production",
-          label: t({ id: "app.sidebar.promotion_tool.production" }),
-          url: AppURL.production(),
-          icon: <ShopOutlined />,
-        },
-      ],
-    },
-    {
-      key: "sms",
-      label: t({ id: "app.sidebar.manage_sms" }),
-      url: '',
-      icon: <MailOutlined />,
-      children: [
-        {
-          key: "sendSMS",
-          label: t({ id: "app.sidebar.manage_sms.send_sms" }),
-          url: AppURL.sendSMS(),
-          icon: <MailOutlined />,
-        },
-        {
-          key: "manageCampain",
-          label: t({ id: "app.sidebar.manage_sms.manage_campaign" }),
-          url: AppURL.manageCampain(),
-          icon: <RobotOutlined />,
-        },
-        {
-          key: "manageSMSSample",
-          label: t({ id: "app.sidebar.manage_sms.manage_sms_sample" }),
-          url: AppURL.manageSMSSample(),
-          icon: <RobotOutlined />,
-        },
-        {
-          key: "flowSMS",
-          label: t({ id: "app.sidebar.manage_sms.flow_sms" }),
-          url: AppURL.flowStatusSMS(),
-          icon: <RobotOutlined />,
-        },
-        {
-          key: "changePhoneNumber",
-          label: t({ id: "app.sidebar.manage_sms.change_phone_number" }),
-          url: AppURL.changePhoneNumber(),
-          icon: <PhoneOutlined />,
-        },
-        {
-          key: "checkPhoneNumber",
-          label: t({ id: "app.sidebar.manage_sms.check_phone_number" }),
-          url: AppURL.checkPhoneNumber(),
-          icon: <PhoneOutlined />,
-        },
-        {
-          key: "smsToast",
-          label: t({ id: "app.sidebar.manage_sms.sms_toast" }),
-          url: AppURL.smsToast(),
-          icon: <BellOutlined />,
-        },
-        {
-          key: "reportSMS",
-          label: t({ id: "app.sidebar.manage_sms.report_sms" }),
-          url: AppURL.reportSMS(),
-          icon: <NotificationOutlined />,
-        },
-        {
-          key: "reportDaily",
-          label: t({ id: "app.sidebar.manage_sms.report_daily" }),
-          url: AppURL.reportDaily(),
-          icon: <NotificationOutlined />,
-        },
-        {
-          key: "reportMonthly",
-          label: t({ id: "app.sidebar.manage_sms.report_monthly" }),
-          url: AppURL.reportMonthly(),
-          icon: <NotificationOutlined />,
-        },
-        {
-          key: "reportCampain",
-          label: t({ id: "app.sidebar.manage_sms.report_campain" }),
-          url: AppURL.reportCampain(),
-          icon: <NotificationOutlined />,
-        },
-        {
-          key: "exportSMS",
-          label: t({ id: "app.sidebar.manage_sms.report_sms" }),
-          url: AppURL.exportSMS(),
-          icon: <ExportOutlined />,
-        },
-      ],
-    },
+    }
   ];
   return (
     <Sider collapsible collapsed={collapse} width={250} onCollapse={onCollapse}>

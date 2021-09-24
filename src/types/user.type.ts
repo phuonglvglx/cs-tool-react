@@ -30,3 +30,15 @@ export interface IUserResult {
   last_name?: string;
   groups: string[];
 }
+
+export interface IInfoUser {
+  id: string;
+  phone: string;
+  email: string;
+  date_joined: string;
+  first_name: string;
+  last_name: string;
+  role: number;
+  gender: number;
+  is_confirm_email: true;
+}

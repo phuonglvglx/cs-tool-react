@@ -8,7 +8,7 @@ export const enUS_Transaction = {
     "app.transaction.table.platform_payment": 'Platform Payment',
     "app.transaction.table.payment_type": 'Payment Type',
     "app.transaction.table.payment_method": 'Phone',
-    "app.transaction.table.cost": 'Cost',
+    "app.transaction.table.selling_price": 'Selling price',
     "app.transaction.table.money": 'Money',
     "app.transaction.table.promotion": 'Promotion',
     "app.transaction.table.created_date": 'Created Date',
