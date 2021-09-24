@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  tool-react-antd:
-    image: tool-react-antd
+  cs-react-antd:
+    image: cs-react-antd
     build:
       context: .
       dockerfile: ./Dockerfile
