@@ -16,6 +16,7 @@ export default function TransactionScene() {
   const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ITransaction[]>([]);
+  const [size, setSize] = useState(10);
   // const dataSource: ITransaction[] = dataTransactions;
 
   const fetchListTransaction = useCallback(async (sizepage: number) => {
@@ -26,11 +27,12 @@ export default function TransactionScene() {
   }, []);
 
   useEffect(() => {
-    fetchListTransaction(10);
+    fetchListTransaction(size);
   }, [fetchListTransaction]);
 
-  const onChangePage = (value: number) => {
-    fetchListTransaction(value);
+  const onChangePage = async(value: number) => {
+    setSize(value);
+    await fetchListTransaction(value)
   };
 
   const columns: any = [
@@ -84,7 +86,7 @@ export default function TransactionScene() {
       fixed: "left",
       ...tableColumnTextFilterConfig<Data>(),
       onFilter: (value: any, record: ITransaction) => {
-        return record.product
+        return record.product.name
           .toString()
           .toLowerCase()
           .includes(value.toString().toLowerCase());
@@ -155,7 +157,7 @@ export default function TransactionScene() {
       width: 100,
     },
   ];
-
+  console.log(size)
   return (
     <div style={{ width: "100%" }}>
       <Card
@@ -164,7 +166,7 @@ export default function TransactionScene() {
           <>
             <Space>
               <span>Show data:</span>
-              <InputNumber min={1} value={10} onChange={onChangePage} />
+              <InputNumber min={1} value={size} onChange={onChangePage} />
             </Space>
           </>
         }
