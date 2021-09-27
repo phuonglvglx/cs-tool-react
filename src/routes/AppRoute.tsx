@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import { Router } from "@reach/router";
+import { navigate, Router } from "@reach/router";
 import HSideBar from "../components/HSideBar";
 import HHeader from "../components/HHeader";
 import HFooter from "../components/HFooter";
@@ -11,6 +11,7 @@ import TransactionDetail from "../scenes/detail";
 import { useCallback, useEffect } from "react";
 import { apiInfoUser } from "../services/user.api";
 import { setToken } from "../services/request";
+import AppURL from "./AppURL";
 
 const { Content } = Layout;
 
@@ -33,10 +34,15 @@ const LayoutAdmin = (props: any) => {
   );
 };
 
-const AppRoute = (props: any) => {
+const AppRoute = () => {
   const getInfoUser = useCallback(async () => {
     const res = await apiInfoUser();
-    console.log(res);
+    if(res.status === 200){
+      console.log(res.data)
+    }else{
+      localStorage.removeItem('token')
+      navigate(AppURL.home());
+    }
   }, []);
 
   useEffect(() => {

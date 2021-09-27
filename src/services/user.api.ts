@@ -1,7 +1,5 @@
-import { navigate } from "@reach/router";
 import { message } from "antd";
-import AppURL from "../routes/AppURL";
-import { IUser, LoginResult } from "../types/user.type";
+import { IUser } from "../types/user.type";
 import API from "./request";
 
 export const apiLogin = async (params: IUser) => {
@@ -15,12 +13,7 @@ export const apiLogin = async (params: IUser) => {
 
 export const apiInfoUser = async () => {
   const res = await API.get("/cs/api/auth/user/");
-  if (res.status === 200) {
-    return res.data;
-  } else {
-    localStorage.removeItem('token');
-    navigate(AppURL.login());
-  }
+  return res;
 };
 
 export const apiLogOut = async () => {

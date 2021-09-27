@@ -4,12 +4,7 @@ import API from "./request";
 
 export const apiListTransaction = async (limit: number, skip: number) => {
   const res:any = await API.get<ITransaction[]>(`/cs/api/transaction/search/?limit=${limit}&skip=${skip}`);
-  if(res.status === 200){
-    return res.data.data;
-  }else{
-    message.error({content: 'error'})
-  }
-  
+  return res
 };
 
 export const apiInfoUserTransaction = async(id:any)=>{

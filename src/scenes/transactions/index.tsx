@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@reach/router";
-import { Table, Card, Tag, Space, InputNumber } from "antd";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { Table, Card, Tag, Button, message } from "antd";
 // import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
 import { ITransaction } from "../../types/transaction.type";
@@ -15,24 +16,48 @@ type Data = {
 export default function TransactionScene() {
   const { t } = useLocale();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ITransaction[]>([]);
+  const [data, setData] = useState<ITransaction[] | undefined>([]);
   const [size, setSize] = useState(10);
+  const [disble, setDisble] = useState(false);
   // const dataSource: ITransaction[] = dataTransactions;
 
-  const fetchListTransaction = useCallback(async (sizepage: number) => {
-    setLoading(true);
-    const res: ITransaction[] = await apiListTransaction(sizepage, 0);
-    setData(res);
-    setLoading(false);
-  }, []);
+  const fetchListTransaction = useCallback(
+    async (sizepage: number) => {
+      setLoading(true);
+      const res: any = await apiListTransaction(sizepage, 0);
+      if (res.status === 200) {
+        setData(res.data.data);
+        setDisble(false);
+      } else if (res.status === 500) {
+        setData([]);
+        message.error({ content: "Error!" });
+      }
+      setLoading(false);
+    },
+    []
+  );
 
   useEffect(() => {
     fetchListTransaction(size);
-  }, [fetchListTransaction]);
+  }, [fetchListTransaction, size]);
 
-  const onChangePage = async(value: number) => {
-    setSize(value);
-    await fetchListTransaction(value)
+  // const onChangePage = async (value: number) => {
+  //   setSize(value);
+  //   await fetchListTransaction(value);
+  // };
+
+  const onPrevious = async () => {
+    setSize(size - 10);
+    await fetchListTransaction(size);
+  };
+
+  const onNext = async () => {
+    setSize(size + 10);
+    await fetchListTransaction(size).catch(() => {
+      setData([]);
+      setDisble(true);
+      setLoading(false);
+    });
   };
 
   const columns: any = [
@@ -157,19 +182,19 @@ export default function TransactionScene() {
       width: 100,
     },
   ];
-  console.log(size)
+
   return (
     <div style={{ width: "100%" }}>
       <Card
         title={t({ id: "app.transaction.title" })}
-        extra={
-          <>
-            <Space>
-              <span>Show data:</span>
-              <InputNumber min={1} value={size} onChange={onChangePage} />
-            </Space>
-          </>
-        }
+        // extra={
+        //   <>
+        //     <Space>
+        //       <span>Show data:</span>
+        //       <InputNumber min={1} value={size} onChange={onChangePage} />
+        //     </Space>
+        //   </>
+        // }
       >
         {/* <Row gutter={16}>
           <Col span={12}>
@@ -198,7 +223,19 @@ export default function TransactionScene() {
           scroll={{ x: 1500 }}
           dataSource={data}
           columns={columns}
+          rowKey={columns.key}
+          pagination={false}
         />
+        <br/>
+        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+          <Button
+            onClick={onPrevious}
+            disabled={size === 10 ? true : false}
+            icon={<LeftOutlined />}
+            style={{marginRight: '10px'}}
+          />
+          <Button onClick={onNext} disabled={disble} icon={<RightOutlined />} />
+        </div>
       </Card>
     </div>
   );

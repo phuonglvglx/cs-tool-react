@@ -9,10 +9,10 @@ const { Header } = Layout;
 const HHeader = () => {
   const { logged, locale } = useAppState((state) => state.user);
   const dispatch = useAppDispatch();
-  const selectLocale = ({ key }: { key: any }) => {
-    dispatch(setUserItem({ locale: key }));
-    localStorage.setItem("locale", key);
-  };
+  // const selectLocale = ({ key }: { key: any }) => {
+  //   dispatch(setUserItem({ locale: key }));
+  //   localStorage.setItem("locale", key);
+  // };
 
   const handleChange = (value: any) => {
     dispatch(setUserItem({ locale: value }));
@@ -61,6 +61,7 @@ const HHeader = () => {
               <a
                 className="ant-dropdown-link"
                 onClick={(e) => e.preventDefault()}
+                href='/#'
               >
                 <Avatar icon={<UserOutlined />} />
               </a>

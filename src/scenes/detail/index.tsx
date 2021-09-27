@@ -19,16 +19,15 @@ export default function TransactionDetail(_: RouteComponentProps) {
   const [data, setData] = useState<IInfoUser>();
   const [subscriptions, setSubscriptions] = useState([]);
   const [transactions, setTransactions] = useState([]);
-
+  const id = params.id;
   const fetchUserTransaction = useCallback(async () => {
-    const id = params.id;
     setLoading(true);
     const res: any = await apiInfoUserTransaction(id);
     setData(res.user);
     setSubscriptions(res.subscriptions);
     setTransactions(res.transactions);
     setLoading(false);
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     fetchUserTransaction();
