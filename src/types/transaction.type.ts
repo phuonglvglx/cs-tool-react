@@ -51,3 +51,8 @@ export interface ISubs {
   product: { id: number; name: string };
   start_at: string;
 }
+
+export interface IRefundParams {
+  transaction_id: number;
+  desc: string;
+}

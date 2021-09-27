@@ -5,8 +5,12 @@ import { Table, Card, Tag, Button, message } from "antd";
 // import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
 import { ITransaction } from "../../types/transaction.type";
-import { apiListTransaction } from "../../services/transaction.api";
+import {
+  apiListTransaction,
+  apiRefundTransaction,
+} from "../../services/transaction.api";
 import { tableColumnTextFilterConfig } from "../../utils/filterTable";
+import moment from "moment";
 
 type Data = {
   key: string;
@@ -21,21 +25,18 @@ export default function TransactionScene() {
   const [disble, setDisble] = useState(false);
   // const dataSource: ITransaction[] = dataTransactions;
 
-  const fetchListTransaction = useCallback(
-    async (sizepage: number) => {
-      setLoading(true);
-      const res: any = await apiListTransaction(sizepage, 0);
-      if (res.status === 200) {
-        setData(res.data.data);
-        setDisble(false);
-      } else if (res.status === 500) {
-        setData([]);
-        message.error({ content: "Error!" });
-      }
-      setLoading(false);
-    },
-    []
-  );
+  const fetchListTransaction = useCallback(async (sizepage: number) => {
+    setLoading(true);
+    const res: any = await apiListTransaction(sizepage, 0);
+    if (res.status === 200) {
+      setData(res.data.data);
+      setDisble(false);
+    } else if (res.status === 500) {
+      setData([]);
+      message.error({ content: "Error!" });
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     fetchListTransaction(size);
@@ -58,6 +59,19 @@ export default function TransactionScene() {
       setDisble(true);
       setLoading(false);
     });
+  };
+
+  const onRefundTransaction = async (id: number) => {
+    const res = await apiRefundTransaction({
+      transaction_id: id,
+      desc: "Huỷ từ crm",
+    });
+    if(res.error === 0){
+      message.success({content: res.message});
+      fetchListTransaction(size)
+    }else{
+      message.error({content: res.message})
+    }
   };
 
   const columns: any = [
@@ -166,58 +180,34 @@ export default function TransactionScene() {
     },
     {
       title: t({ id: "app.transaction.table.created_date" }),
-      dataIndex: "created_at",
       key: "created_at",
+      render: (record: ITransaction) => moment(record.created_at).format("L"),
     },
     {
       title: t({ id: "app.transaction.table.payment_date" }),
       dataIndex: "payment_date",
       key: "payment_date",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.payment_error" }),
       dataIndex: "payment_error",
       key: "payment_error",
-      width: 100,
+    },
+    {
+      title: t({ id: "app.promotion_tool.action" }),
+      key: "action",
+      render: (record: ITransaction) => (
+        <Button onClick={() => onRefundTransaction(record.id)} type="primary">
+          Refund
+        </Button>
+      ),
+      fixed: "right",
     },
   ];
 
   return (
     <div style={{ width: "100%" }}>
-      <Card
-        title={t({ id: "app.transaction.title" })}
-        // extra={
-        //   <>
-        //     <Space>
-        //       <span>Show data:</span>
-        //       <InputNumber min={1} value={size} onChange={onChangePage} />
-        //     </Space>
-        //   </>
-        // }
-      >
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <span>{t({ id: "app.transaction.form.form_create_date" })}</span>
-            <DatePicker onChange={onChange} style={{ width: "100%" }} />
-          </Col>
-          <Col span={12}>
-            <span>{t({ id: "app.transaction.form.to_create_date" })}</span>
-            <DatePicker onChange={onChange} style={{ width: "100%" }} />
-          </Col>
-        </Row>
-        <br /> */}
-        {/* <Row gutter={16}>
-          <Col span={12}>
-            <span>{t({ id: "app.transaction.form.form_payment_date" })}</span>
-            <DatePicker onChange={onChange} style={{ width: "100%" }} />
-          </Col>
-          <Col span={12}>
-            <span>{t({ id: "app.transaction.form.to_payment_date" })}</span>
-            <DatePicker onChange={onChange} style={{ width: "100%" }} />
-          </Col>
-        </Row>
-        <br /> */}
+      <Card title={t({ id: "app.transaction.title" })}>
         <Table
           loading={loading}
           scroll={{ x: 1500 }}
@@ -226,13 +216,13 @@ export default function TransactionScene() {
           rowKey={columns.key}
           pagination={false}
         />
-        <br/>
-        <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+        <br />
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={onPrevious}
             disabled={size === 10 ? true : false}
             icon={<LeftOutlined />}
-            style={{marginRight: '10px'}}
+            style={{ marginRight: "10px" }}
           />
           <Button onClick={onNext} disabled={disble} icon={<RightOutlined />} />
         </div>
