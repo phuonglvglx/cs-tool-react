@@ -80,7 +80,7 @@ export default function TransactionScene() {
       key: "sdt",
       fixed: "left",
       render: (text: ITransaction) => (
-        <Link to={`/transaction/${text.user.id}`}>{text.user.phone}</Link>
+        <Link to={`/transaction/${text.user.id}`} style={{whiteSpace: "nowrap"}}>{text.user.phone}</Link>
       ),
       ...tableColumnTextFilterConfig<Data>(),
       onFilter: (value: any, record: any) => {
