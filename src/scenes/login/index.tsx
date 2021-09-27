@@ -1,4 +1,4 @@
-import { Card, Form, Input, Button } from "antd";
+import { Card, Form, Input, Button, message } from "antd";
 import { RouteComponentProps, useNavigate } from '@reach/router';
 import { useAppDispatch } from "../../stores";
 import { loginAsync } from "../../stores/user.store";
@@ -14,7 +14,7 @@ export default function LoginScene(_: RouteComponentProps) {
     if (res.key) {
       navigate('/')
     } else {
-      console.log("error");
+      message.error({content: 'Login fail!'})
     }
   };
 

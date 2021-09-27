@@ -2,8 +2,6 @@ import axios from "axios";
 import { navigate } from '@reach/router';
 
 axios.defaults.baseURL = process.env.API || "https://api.dev.icankids.com.vn";
-// axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
-// axios.defaults.headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers";
 axios.interceptors.response.use(
   (response) => {
     return response;
@@ -11,6 +9,7 @@ axios.interceptors.response.use(
   (error) => {
     switch (error.response.status) {
       case 401:
+        localStorage.removeItem('token')
         navigate('/login');
         break;
       case 404:

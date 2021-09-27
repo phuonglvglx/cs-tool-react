@@ -31,8 +31,9 @@ export default userSlice.reducer;
 
 export const loginAsync = async (payload: IUser) => {
   return async (dispatch: Dispatch) => {
-    const res: {key: string} = await apiLogin(payload);
+    const res = await apiLogin(payload);
     if (res) {
+      console.log(res)
       localStorage.setItem('token', res.key);
       setToken(res.key);
       dispatch(

@@ -8,6 +8,9 @@ import TransactionScene from "../scenes/transactions";
 import PrivateRoute from "./PrivateRoute";
 import LoginScene from "../scenes/login";
 import TransactionDetail from "../scenes/detail";
+import { useCallback, useEffect } from "react";
+import { apiInfoUser } from "../services/user.api";
+import { setToken } from "../services/request";
 
 const { Content } = Layout;
 
@@ -31,13 +34,22 @@ const LayoutAdmin = (props: any) => {
 };
 
 const AppRoute = (props: any) => {
+  const getInfoUser = useCallback(async () => {
+    const res = await apiInfoUser();
+    console.log(res);
+  }, []);
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+    getInfoUser();
+  }, [getInfoUser]);
   return (
     <Router>
-      <LoginScene path="/login"/>
+      <LoginScene path="/login" />
       <LayoutAdmin path="/">
         <PrivateRoute as={DashboardScene} path="/" />
         <PrivateRoute as={TransactionScene} path="/transaction" />
-        <PrivateRoute as={TransactionDetail} path="/transaction/:id"/>
+        <PrivateRoute as={TransactionDetail} path="/transaction/:id" />
       </LayoutAdmin>
     </Router>
   );
