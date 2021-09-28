@@ -99,7 +99,7 @@ export default function TransactionScene() {
             return <Tag color="orange">{record.status}</Tag>;
           case "succeed":
             return <Tag color="blue">{record.status}</Tag>;
-          default:
+          case "failed":
             <Tag color="red">{record.status}</Tag>;
         }
       },
@@ -112,6 +112,10 @@ export default function TransactionScene() {
           text: "succeed",
           value: "succeed",
         },
+        {
+          text: "failed",
+          value: "failed"
+        }
       ],
       onFilter: (value: any, record: ITransaction) =>
         record.status.startsWith(value),
@@ -196,11 +200,13 @@ export default function TransactionScene() {
     {
       title: t({ id: "app.promotion_tool.action" }),
       key: "action",
-      render: (record: ITransaction) => (
-        <Button onClick={() => onRefundTransaction(record.id)} type="primary">
+      render: (record: ITransaction) => {
+        if(record.status === 'succeed'){
+          return <Button onClick={() => onRefundTransaction(record.id)} type="primary">
           Refund
         </Button>
-      ),
+        }
+      },
       fixed: "right",
     },
   ];
