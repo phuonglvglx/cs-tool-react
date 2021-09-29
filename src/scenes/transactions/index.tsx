@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@reach/router";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Table, Card, Tag, Button, message } from "antd";
+import { Table, Card, Tag, Button, message, Input } from "antd";
 // import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
 import { ITransaction } from "../../types/transaction.type";
-import {
-  apiListTransaction,
-  apiRefundTransaction,
-} from "../../services/transaction.api";
+import { apiListTransaction } from "../../services/transaction.api";
 import { tableColumnTextFilterConfig } from "../../utils/filterTable";
 import moment from "moment";
+
+const { Search } = Input;
 
 type Data = {
   key: string;
@@ -21,26 +20,30 @@ export default function TransactionScene() {
   const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ITransaction[] | undefined>([]);
-  const [size, setSize] = useState(10);
+  const [size] = useState(10);
+  const [skip, setSkip] = useState(0);
   const [disble, setDisble] = useState(false);
   // const dataSource: ITransaction[] = dataTransactions;
 
-  const fetchListTransaction = useCallback(async (sizepage: number) => {
-    setLoading(true);
-    const res: any = await apiListTransaction(sizepage, 0);
-    if (res.status === 200) {
-      setData(res.data.data);
-      setDisble(false);
-    } else if (res.status === 500) {
-      setData([]);
-      message.error({ content: "Error!" });
-    }
-    setLoading(false);
-  }, []);
+  const fetchListTransaction = useCallback(
+    async (sizepage: number, skip: number, keyword: any) => {
+      setLoading(true);
+      const res: any = await apiListTransaction(sizepage, skip, keyword);
+      if (res.status === 200) {
+        setData(res.data.data);
+        setDisble(false);
+      } else if (res.status === 500) {
+        setData([]);
+        message.error({ content: "Error!" });
+      }
+      setLoading(false);
+    },
+    []
+  );
 
   useEffect(() => {
-    fetchListTransaction(size);
-  }, [fetchListTransaction, size]);
+    fetchListTransaction(size, skip, '');
+  }, [fetchListTransaction, size, skip]);
 
   // const onChangePage = async (value: number) => {
   //   setSize(value);
@@ -48,30 +51,22 @@ export default function TransactionScene() {
   // };
 
   const onPrevious = async () => {
-    setSize(size - 10);
-    await fetchListTransaction(size);
+    setSkip(skip - 10);
+    await fetchListTransaction(size, skip, '');
   };
 
   const onNext = async () => {
-    setSize(size + 10);
-    await fetchListTransaction(size).catch(() => {
+    setSkip(skip + 10);
+    await fetchListTransaction(size, skip, '').catch(() => {
       setData([]);
-      setDisble(true);
+      setDisble(false);
       setLoading(false);
     });
   };
 
-  const onRefundTransaction = async (id: number) => {
-    const res = await apiRefundTransaction({
-      transaction_id: id,
-      desc: "Huỷ từ crm",
-    });
-    if(res.error === 0){
-      message.success({content: res.message});
-      fetchListTransaction(size)
-    }else{
-      message.error({content: res.message})
-    }
+  const onSearchTransaction = async (e: string) => {
+    setSkip(0);
+    await fetchListTransaction(size, skip, e);
   };
 
   const columns: any = [
@@ -80,7 +75,12 @@ export default function TransactionScene() {
       key: "sdt",
       fixed: "left",
       render: (text: ITransaction) => (
-        <Link to={`/transaction/${text.user.id}`} style={{whiteSpace: "nowrap"}}>{text.user.phone}</Link>
+        <Link
+          to={`/transaction/${text.user.id}`}
+          style={{ whiteSpace: "nowrap" }}
+        >
+          {text.user.phone}
+        </Link>
       ),
       ...tableColumnTextFilterConfig<Data>(),
       onFilter: (value: any, record: any) => {
@@ -114,8 +114,8 @@ export default function TransactionScene() {
         },
         {
           text: "failed",
-          value: "failed"
-        }
+          value: "failed",
+        },
       ],
       onFilter: (value: any, record: ITransaction) =>
         record.status.startsWith(value),
@@ -197,23 +197,22 @@ export default function TransactionScene() {
       dataIndex: "payment_error",
       key: "payment_error",
     },
-    {
-      title: t({ id: "app.promotion_tool.action" }),
-      key: "action",
-      render: (record: ITransaction) => {
-        if(record.status === 'succeed'){
-          return <Button onClick={() => onRefundTransaction(record.id)} type="primary">
-          Refund
-        </Button>
-        }
-      },
-      fixed: "right",
-    },
   ];
 
   return (
     <div style={{ width: "100%" }}>
       <Card title={t({ id: "app.transaction.title" })}>
+        <div>
+          <h3>Tìm kiếm bằng keyword:</h3>
+          <Search
+            placeholder="Tìm kiếm bằng keyword"
+            enterButton="Search"
+            onSearch={onSearchTransaction}
+            size="large"
+            loading={loading}
+          />
+        </div>
+        <br />
         <Table
           loading={loading}
           scroll={{ x: 1500 }}
@@ -226,7 +225,7 @@ export default function TransactionScene() {
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={onPrevious}
-            disabled={size === 10 ? true : false}
+            disabled={skip === 10 ? true : false}
             icon={<LeftOutlined />}
             style={{ marginRight: "10px" }}
           />

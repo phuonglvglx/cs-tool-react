@@ -1,8 +1,22 @@
 import { RouteComponentProps, useParams } from "@reach/router";
-import { Card, Form, Input, Row, Table, Tag, Col } from "antd";
+import {
+  Card,
+  Form,
+  Input,
+  Row,
+  Table,
+  Tag,
+  Col,
+  Button,
+  message,
+  Popover,
+} from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../../locales";
-import { apiInfoUserTransaction } from "../../services/transaction.api";
+import {
+  apiInfoUserTransaction,
+  apiRefundTransaction,
+} from "../../services/transaction.api";
 import { ISubs, ITransaction } from "../../types/transaction.type";
 import { IInfoUser } from "../../types/user.type";
 import { tableColumnTextFilterConfig } from "../../utils/filterTable";
@@ -19,6 +33,8 @@ export default function TransactionDetail(_: RouteComponentProps) {
   const [data, setData] = useState<IInfoUser>();
   const [subscriptions, setSubscriptions] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [desc, setDesc] = useState("");
+
   const id = params.id;
   const fetchUserTransaction = useCallback(async () => {
     setLoading(true);
@@ -32,6 +48,24 @@ export default function TransactionDetail(_: RouteComponentProps) {
   useEffect(() => {
     fetchUserTransaction();
   }, [fetchUserTransaction]);
+
+  const onRefundTransaction = async (id: number, desc: string) => {
+    if(desc){
+      const res = await apiRefundTransaction({
+        transaction_id: id,
+        desc: desc,
+      });
+      if (res.error === 0) {
+        message.success({ content: res.message });
+        fetchUserTransaction();
+      } else {
+        message.error({ content: res.message });
+      }
+    }else{
+      message.error({content: 'Vui lòng nhập lý do'})
+    }
+    
+  };
 
   const columnSubs = [
     {
@@ -179,13 +213,42 @@ export default function TransactionDetail(_: RouteComponentProps) {
       title: t({ id: "app.transaction.table.payment_date" }),
       dataIndex: "payment_date",
       key: "payment_date",
-      width: 100,
     },
     {
       title: t({ id: "app.transaction.table.payment_error" }),
       dataIndex: "payment_error",
       key: "payment_error",
-      width: 100,
+    },
+    {
+      title: t({ id: "app.promotion_tool.action" }),
+      key: "action",
+      render: (record: ITransaction) => {
+        if (record.status === "succeed") {
+          return (
+            <Popover
+              content={
+                <div style={{textAlign: 'center', lineHeight: 3}}>
+                  <Input
+                    value={desc}
+                    placeholder="Nhập lý do !"
+                    onChange={(e) => {
+                      setDesc(e.target.value);
+                    }}
+                  />
+                  <Button type="primary" onClick={() => onRefundTransaction(record.id, desc)}>
+                    Ok
+                  </Button>
+                </div>
+              }
+              title={null}
+              trigger="click"
+            >
+              <Button type="primary">Refund</Button>
+            </Popover>
+          );
+        }
+      },
+      fixed: "right",
     },
   ];
   return (
