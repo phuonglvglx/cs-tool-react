@@ -10,7 +10,9 @@ import {
   Button,
   message,
   Popover,
+  Popconfirm,
 } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../../locales";
 import {
@@ -34,6 +36,7 @@ export default function TransactionDetail(_: RouteComponentProps) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [desc, setDesc] = useState("");
+  const [popover, setPopover] = useState(false);
 
   const id = params.id;
   const fetchUserTransaction = useCallback(async () => {
@@ -50,7 +53,7 @@ export default function TransactionDetail(_: RouteComponentProps) {
   }, [fetchUserTransaction]);
 
   const onRefundTransaction = async (id: number, desc: string) => {
-    if(desc){
+    if (desc) {
       const res = await apiRefundTransaction({
         transaction_id: id,
         desc: desc,
@@ -61,10 +64,9 @@ export default function TransactionDetail(_: RouteComponentProps) {
       } else {
         message.error({ content: res.message });
       }
-    }else{
-      message.error({content: 'Vui lòng nhập lý do'})
+    } else {
+      message.error({ content: "Vui lòng nhập lý do" });
     }
-    
   };
 
   const columnSubs = [
@@ -225,26 +227,25 @@ export default function TransactionDetail(_: RouteComponentProps) {
       render: (record: ITransaction) => {
         if (record.status === "succeed") {
           return (
-            <Popover
-              content={
-                <div style={{textAlign: 'center', lineHeight: 3}}>
-                  <Input
+            <Popconfirm
+              icon={null}
+              placement="left"
+              title={
+                <div>
+                  <TextArea
+                  rows={4}
                     value={desc}
                     placeholder="Nhập lý do !"
                     onChange={(e) => {
                       setDesc(e.target.value);
                     }}
                   />
-                  <Button type="primary" onClick={() => onRefundTransaction(record.id, desc)}>
-                    Ok
-                  </Button>
                 </div>
               }
-              title={null}
-              trigger="click"
+              onConfirm={() => onRefundTransaction(record.id, desc)}
             >
               <Button type="primary">Refund</Button>
-            </Popover>
+            </Popconfirm>
           );
         }
       },

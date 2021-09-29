@@ -65,8 +65,10 @@ export default function TransactionScene() {
   };
 
   const onSearchTransaction = async (e: string) => {
+    setLoading(true);
     setSkip(0);
     await fetchListTransaction(size, skip, e);
+    setLoading(false)
   };
 
   const columns: any = [
