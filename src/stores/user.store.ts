@@ -18,7 +18,7 @@ const userSlice = createSlice({
     setUserItem(state, action: PayloadAction<Partial<UserState>>) {
       const { key } = action.payload;
       if (key) {
-        localStorage.setItem("auth", action.payload.key || "");
+        localStorage.setItem("token", action.payload.key || "");
       }
 
       Object.assign(state, action.payload);
