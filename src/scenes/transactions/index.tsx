@@ -210,7 +210,12 @@ export default function TransactionScene() {
       title: "Refunded",
       key: "refunded",
       render: (record: ITransaction)=> record.refund.id === -1? '' : <CheckCircleTwoTone twoToneColor="#52c41a" />
-    }
+    },
+    {
+      title: "Refund reason",
+      key: "refund_reason",
+      render: (record: ITransaction)=> record.refund.description
+    },
   ];
 
   return (

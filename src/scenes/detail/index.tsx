@@ -221,6 +221,11 @@ export default function TransactionDetail(_: RouteComponentProps) {
       key: "payment_error",
     },
     {
+      title: "Refund reason",
+      key: "refund_reason",
+      render: (record: ITransaction)=> record.refund.description
+    },
+    {
       title: t({ id: "app.promotion_tool.action" }),
       key: "action",
       render: (record: ITransaction) => {
