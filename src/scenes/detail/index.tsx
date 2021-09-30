@@ -12,6 +12,7 @@ import {
   Popconfirm,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import { CheckCircleTwoTone } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../../locales";
 import {
@@ -226,12 +227,13 @@ export default function TransactionDetail(_: RouteComponentProps) {
         if (record.status === "succeed") {
           return (
             <Popconfirm
+              disabled={record.refund.id === -1 ? false : true}
               icon={null}
               placement="left"
               title={
                 <div>
                   <TextArea
-                  rows={4}
+                    rows={4}
                     value={desc}
                     placeholder="Nhập lý do !"
                     onChange={(e) => {
@@ -242,13 +244,24 @@ export default function TransactionDetail(_: RouteComponentProps) {
               }
               onConfirm={() => onRefundTransaction(record.id, desc)}
             >
-              <Button type="primary">Refund</Button>
+              <Button
+                type="primary"
+                disabled={record.refund.id === -1 ? false : true}
+              >
+                Refund
+              </Button>
             </Popconfirm>
           );
         }
       },
       fixed: "right",
     },
+    {
+      title: "Refunded",
+      key: "refunded",
+      fixed: "right",
+      render: (record: ITransaction)=> record.refund.id === -1? '' : <CheckCircleTwoTone twoToneColor="#52c41a" />
+    }
   ];
   return (
     <Card title={"Thông tin người dùng"}>

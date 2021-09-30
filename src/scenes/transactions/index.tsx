@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@reach/router";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { LeftOutlined, RightOutlined, CheckCircleTwoTone } from "@ant-design/icons";
 import { Table, Card, Tag, Button, message, Input } from "antd";
 // import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
@@ -151,8 +151,15 @@ export default function TransactionScene() {
     },
     {
       title: t({ id: "app.transaction.table.transaction_id" }),
-      dataIndex: "id",
       key: "transaction_id",
+      render: (record: any) => record.id,
+      ...tableColumnTextFilterConfig<Data>(),
+      onFilter: (value: any, record: ITransaction) => {
+        return record.id
+          .toString()
+          .toLowerCase()
+          .includes(value.toString().toLowerCase());
+      },
     },
     {
       title: t({ id: "app.transaction.table.platform_payment" }),
@@ -199,6 +206,11 @@ export default function TransactionScene() {
       dataIndex: "payment_error",
       key: "payment_error",
     },
+    {
+      title: "Refunded",
+      key: "refunded",
+      render: (record: ITransaction)=> record.refund.id === -1? '' : <CheckCircleTwoTone twoToneColor="#52c41a" />
+    }
   ];
 
   return (
