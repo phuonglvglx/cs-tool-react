@@ -1,16 +1,21 @@
 import { message } from "antd";
 import { IRefundParams, ITransaction } from "../types/transaction.type";
+import { getLocalStorageValue } from "../utils/utils";
 import API from "./request";
+
+const header = {
+  "Authorization": `Token ${getLocalStorageValue('token')}`
+}
 
 export const apiListTransaction = async (limit: number, skip: number, keyword: any) => {
   const res: any = await API.get<ITransaction[]>(
-    `/cs/api/transaction/search/?limit=${limit}&skip=${skip}&keyword=${keyword}`
+    `/cs/api/transaction/search/?limit=${limit}&skip=${skip}&keyword=${keyword}`, {headers: header}
   );
   return res;
 };
 
 export const apiInfoUserTransaction = async (id: any) => {
-  const res: any = await API.get(`/cs/api/user/info/?user_id=${id}`);
+  const res: any = await API.get(`/cs/api/user/info/?user_id=${id}`, {headers: header});
   if (res.status === 200) {
     return res.data.data;
   } else {
@@ -19,7 +24,7 @@ export const apiInfoUserTransaction = async (id: any) => {
 };
 
 export const apiRefundTransaction = async (params: IRefundParams) => {
-  const res: any = await API.post("/cs/api/transaction/refund/", params);
+  const res: any = await API.post("/cs/api/transaction/refund/", params, {headers: header});
   return res.data;
 };
 

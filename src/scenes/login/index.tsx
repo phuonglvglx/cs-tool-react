@@ -12,7 +12,8 @@ export default function LoginScene(_: RouteComponentProps) {
   const onFinish = async (form: IUser) => {
     const res: any = await dispatch(await loginAsync(form));
     if (res.key) {
-      navigate('/')
+      navigate('/');
+      window.location.reload()
     } else {
       message.error({content: 'Login fail!'})
     }

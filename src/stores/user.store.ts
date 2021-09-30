@@ -2,11 +2,12 @@ import { createSlice, PayloadAction, Dispatch } from "@reduxjs/toolkit";
 import { setToken } from "../services/request";
 import { apiLogin, apiLogOut } from "../services/user.api";
 import { UserState, Locale, IUser } from "../types/user.type";
+import { getLocalStorageValue } from "../utils/utils";
 
 const initialState: UserState = {
   locale: (localStorage.getItem("locale")! || "en_US") as Locale,
   logged: localStorage.getItem("token") ? true : false,
-  key: localStorage.getItem("token") || "",
+  key: getLocalStorageValue('token') || "",
   collapsed: false,
 };
 
@@ -32,6 +33,7 @@ export default userSlice.reducer;
 export const loginAsync = async (payload: IUser) => {
   return async (dispatch: Dispatch) => {
     const res = await apiLogin(payload);
+    console.log(res)
     if (res) {
       localStorage.setItem('token', res.key);
       setToken(res.key);

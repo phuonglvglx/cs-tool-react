@@ -9,7 +9,6 @@ import {
   Col,
   Button,
   message,
-  Popover,
   Popconfirm,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
@@ -36,7 +35,6 @@ export default function TransactionDetail(_: RouteComponentProps) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [desc, setDesc] = useState("");
-  const [popover, setPopover] = useState(false);
 
   const id = params.id;
   const fetchUserTransaction = useCallback(async () => {

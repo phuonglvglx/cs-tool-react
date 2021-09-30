@@ -8,7 +8,7 @@ import { useAppState } from "./stores";
 import enUS from "antd/es/locale/en_US";
 import viVN from "antd/es/locale/vi_VN";
 import moment from "moment";
-import { setToken } from "./services/request";
+// import { setToken } from "./services/request";
 import { navigate } from "@reach/router";
 
 const App: FC = () => {
@@ -22,7 +22,7 @@ const App: FC = () => {
       moment.locale("vi-vn");
     }
     if (token) {
-      setToken(token);
+      // setToken(token);
     } else {
       navigate("/login");
     }

@@ -1,6 +1,11 @@
 import { message } from "antd";
 import { IUser } from "../types/user.type";
+import { getLocalStorageValue } from "../utils/utils";
 import API from "./request";
+
+const header = {
+  "Authorization": `Token ${getLocalStorageValue('token')}`
+}
 
 export const apiLogin = async (params: IUser) => {
   const res = await API.post("/cs/api/auth/login/", params);
@@ -12,7 +17,7 @@ export const apiLogin = async (params: IUser) => {
 };
 
 export const apiInfoUser = async () => {
-  const res = await API.get("/cs/api/auth/user/");
+  const res = await API.get("/cs/api/auth/user/", {headers: header});
   return res;
 };
 
