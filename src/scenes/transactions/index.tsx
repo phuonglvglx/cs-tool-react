@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "@reach/router";
-import { LeftOutlined, RightOutlined, CheckCircleTwoTone } from "@ant-design/icons";
-import { Table, Card, Tag, Button, message, Input } from "antd";
+import {
+  LeftOutlined,
+  RightOutlined,
+  CheckCircleTwoTone,
+} from "@ant-design/icons";
+import { Table, Card, Tag, Button, message, Input, Alert } from "antd";
 // import { dataTransactions } from "./data.transaction";
 import { useLocale } from "../../locales";
 import { ITransaction } from "../../types/transaction.type";
-import { apiListTransaction } from "../../services/transaction.api";
+import {
+  apiListTransaction,
+  apiSearchTransaction,
+} from "../../services/transaction.api";
 import { tableColumnTextFilterConfig } from "../../utils/filterTable";
 import moment from "moment";
 
@@ -23,12 +30,13 @@ export default function TransactionScene() {
   const [size] = useState(10);
   const [skip, setSkip] = useState(0);
   const [disble, setDisble] = useState(false);
+  const [textError, setTextError] = useState("");
   // const dataSource: ITransaction[] = dataTransactions;
 
   const fetchListTransaction = useCallback(
-    async (sizepage: number, skip: number, keyword: any) => {
+    async (sizepage: number, skip: number) => {
       setLoading(true);
-      const res: any = await apiListTransaction(sizepage, skip, keyword);
+      const res: any = await apiListTransaction(sizepage, skip);
       if (res.status === 200) {
         setData(res.data.data);
         setDisble(false);
@@ -42,7 +50,7 @@ export default function TransactionScene() {
   );
 
   useEffect(() => {
-    fetchListTransaction(size, skip, '');
+    fetchListTransaction(size, skip);
   }, [fetchListTransaction, size, skip]);
 
   // const onChangePage = async (value: number) => {
@@ -52,12 +60,12 @@ export default function TransactionScene() {
 
   const onPrevious = async () => {
     setSkip(skip - 10);
-    await fetchListTransaction(size, skip, '');
+    await fetchListTransaction(size, skip);
   };
 
   const onNext = async () => {
     setSkip(skip + 10);
-    await fetchListTransaction(size, skip, '').catch(() => {
+    await fetchListTransaction(size, skip).catch(() => {
       setData([]);
       setDisble(false);
       setLoading(false);
@@ -67,8 +75,21 @@ export default function TransactionScene() {
   const onSearchTransaction = async (e: string) => {
     setLoading(true);
     setSkip(0);
-    await fetchListTransaction(size, skip, e);
-    setLoading(false)
+    if (e.length < 10) {
+      setTextError("Vui lòng nhập đúng số điện thoại");
+    } else if (e.length > 11) {
+      setTextError("Vui lòng nhập đúng số điện thoại");
+    } else {
+      await apiSearchTransaction(size, skip, null, e)
+        .then((res) => {
+          setData(res.data);
+          setTextError('')
+        })
+        .catch(() => {
+          setData([]);
+        });
+    }
+    setLoading(false);
   };
 
   const columns: any = [
@@ -209,12 +230,17 @@ export default function TransactionScene() {
     {
       title: "Refunded",
       key: "refunded",
-      render: (record: ITransaction)=> record.refund.id === -1? '' : <CheckCircleTwoTone twoToneColor="#52c41a" />
+      render: (record: ITransaction) =>
+        record.refund.id === -1 ? (
+          ""
+        ) : (
+          <CheckCircleTwoTone twoToneColor="#52c41a" />
+        ),
     },
     {
       title: "Refund reason",
       key: "refund_reason",
-      render: (record: ITransaction)=> record.refund.description
+      render: (record: ITransaction) => record.refund.description,
     },
   ];
 
@@ -222,14 +248,23 @@ export default function TransactionScene() {
     <div style={{ width: "100%" }}>
       <Card title={t({ id: "app.transaction.title" })}>
         <div>
-          <h3>Tìm kiếm bằng keyword:</h3>
+          <h3>Tìm kiếm bằng Phone:</h3>
           <Search
-            placeholder="Tìm kiếm bằng keyword"
-            enterButton="Search"
+            type="number"
+            maxLength={11}
+            minLength={10}
+            placeholder="Tìm kiếm bằng Phone"
+            enterButton="Tìm kiếm"
             onSearch={onSearchTransaction}
             size="large"
             loading={loading}
           />
+        </div>
+        <br />
+        <div>
+        {textError ? (
+            <Alert message={textError} type="error" showIcon />
+          ) : null}
         </div>
         <br />
         <Table
@@ -239,7 +274,7 @@ export default function TransactionScene() {
           columns={columns}
           rowKey={columns.key}
           pagination={false}
-          tableLayout='auto'
+          tableLayout="auto"
         />
         <br />
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
