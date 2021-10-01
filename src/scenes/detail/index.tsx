@@ -61,6 +61,7 @@ export default function TransactionDetail(_: RouteComponentProps) {
       if (res.error === 0) {
         message.success({ content: res.message });
         fetchUserTransaction();
+        setDesc('')
       } else {
         message.error({ content: res.message });
       }
