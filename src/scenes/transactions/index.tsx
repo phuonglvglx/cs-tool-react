@@ -234,11 +234,12 @@ export default function TransactionScene() {
         <br />
         <Table
           loading={loading}
-          scroll={{ x: 1500 }}
+          scroll={{ x: 2000 }}
           dataSource={data}
           columns={columns}
           rowKey={columns.key}
           pagination={false}
+          tableLayout='auto'
         />
         <br />
         <div style={{ display: "flex", justifyContent: "flex-end" }}>

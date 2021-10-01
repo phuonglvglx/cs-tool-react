@@ -22,6 +22,7 @@ import {
 import { ISubs, ITransaction } from "../../types/transaction.type";
 import { IInfoUser } from "../../types/user.type";
 import { tableColumnTextFilterConfig } from "../../utils/filterTable";
+import moment from "moment";
 
 type Data = {
   key: string;
@@ -207,8 +208,8 @@ export default function TransactionDetail(_: RouteComponentProps) {
     },
     {
       title: t({ id: "app.transaction.table.created_date" }),
-      dataIndex: "created_at",
       key: "created_at",
+      render: (record: ITransaction)=>moment(record.created_at)
     },
     {
       title: t({ id: "app.transaction.table.payment_date" }),
@@ -329,9 +330,10 @@ export default function TransactionDetail(_: RouteComponentProps) {
       {transactions ? (
         <Table
           loading={loading}
-          scroll={{ x: 1500 }}
+          scroll={{ x: 2000 }}
           columns={columns}
           dataSource={transactions}
+          tableLayout= 'auto'
         />
       ) : null}
     </Card>
