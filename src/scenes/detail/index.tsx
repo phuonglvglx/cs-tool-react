@@ -12,7 +12,7 @@ import {
   Popconfirm,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { CheckCircleTwoTone } from "@ant-design/icons";
+import { CheckCircleTwoTone, CloseOutlined } from "@ant-design/icons";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../../locales";
 import {
@@ -37,6 +37,8 @@ export default function TransactionDetail(_: RouteComponentProps) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [desc, setDesc] = useState("");
+
+  console.log(subscriptions)
 
   const id = params.id;
   const fetchUserTransaction = useCallback(async () => {
@@ -104,12 +106,12 @@ export default function TransactionDetail(_: RouteComponentProps) {
     {
       title: "Auto Renew",
       key: "auto_renew",
-      dataIndex: "auto_renew",
+      render: (record:any)=> record.auto_renew ? <CheckCircleTwoTone twoToneColor="#52c41a" /> : <CloseOutlined twoToneColor="#eb2f96"/>
     },
     {
       title: "Is Active",
       key: "is_active",
-      dataIndex: "is_active",
+      render: (record:any)=> record.is_active ? <CheckCircleTwoTone twoToneColor="#52c41a" /> : <CloseOutlined twoToneColor="#eb2f96"/>
     },
     {
       title: "Last Transaction ID",
