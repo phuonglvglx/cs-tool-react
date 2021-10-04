@@ -72,7 +72,7 @@ export default function TransactionDetail(_: RouteComponentProps) {
 
   const columnSubs = [
     {
-      title: "Poduct",
+      title: "Product",
       key: "product",
       render: (record: ISubs) => record.product.name,
     },
